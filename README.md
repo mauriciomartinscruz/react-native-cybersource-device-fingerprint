@@ -7,10 +7,7 @@
 
 ### Manual installation
 
-
 #### iOS
-
-NOTE: if you use RN 0.60+ you can autolinking, ignore step 1.
 
 1. Add pod 'RNCybersourceDeviceFingerprint', :path => '../node_modules/react-native-cybersource-device-fingerprint/ios' to your Podfile
 2. Run pod install from ios folder
@@ -18,9 +15,11 @@ NOTE: if you use RN 0.60+ you can autolinking, ignore step 1.
 
 #### Android
 
-1. Open up `android/app/src/main/java/[...]/MainActivity.java`
-  - Add `import com.estuardoeg.CybersourceDeviceFingerprint.RNCybersourceDeviceFingerprintPackage;` to the imports at the top of the file
-  - Add `new RNCybersourceDeviceFingerprintPackage(_application)` to the list returned by the `getPackages()` method
+NOTE: if you use Reactive Native 0.60+ you can autolinking, ignore this step 1.
+
+1. Open up `android/app/src/main/java/[...]/MainApplication.java`
+  - Add `import com.mauriciomartinscruz.CybersourceDeviceFingerprint.RNCybersourceDeviceFingerprintPackage;` to the imports at the top of the file
+  - Add `new RNCybersourceDeviceFingerprintPackage()` to the list returned by the `getPackages()` method
 2. Append the following lines to `android/settings.gradle`:
   	```
   	include ':react-native-cybersource-device-fingerprint'
@@ -28,7 +27,11 @@ NOTE: if you use RN 0.60+ you can autolinking, ignore step 1.
   	```
 3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
   	```
-      implementation project(':react-native-cybersource-device-fingerprint')
+	dependencies {
+		...
+		// Cybersource FingerPring by mauriciomartinscruz
+		implementation project(':react-native-cybersource-device-fingerprint')
+	}
   	```
 
 
@@ -44,6 +47,7 @@ RNCybersourceDeviceFingerprint.configure(ORG_ID).then( () => {
 	console.log('THE CYBERSOURCE INIT ERROR IS ', err)
 })
 // getSession accepts custom attributes for session, check the Cybersource SDK documentation
+// example: ['url', 'merchantId', 'customerIdUnique']
 RNCybersourceDeviceFingerprint.getSessionID([]).then( (obj) => {
 	console.log(`The session ID is ${obj.sessionId}`)
 })
