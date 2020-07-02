@@ -1,18 +1,18 @@
 //
-//  RNCybersourceDeviceFingerprint.m
+//  RNFingerprintCybersource.m
 //
 //  Created by Estuardo Estrada on 12/16/18.
 //  Copyright © 2018. All rights reserved.
 //
 
-#import "RNCybersourceDeviceFingerprint.h"
+#import "RNFingerprintCybersource.h"
 #import <React/RCTLog.h>
 #import <TMXProfiling/TMXProfiling.h>
 #import <TMXProfilingConnections/TMXProfilingConnections.h>
 
 static NSString *const kRejectCode = @"CyberSourceSDKModule";
 
-@implementation RNCybersourceDeviceFingerprint{
+@implementation RNFingerprintCybersource{
     TMXProfiling *_defender;
 }
 

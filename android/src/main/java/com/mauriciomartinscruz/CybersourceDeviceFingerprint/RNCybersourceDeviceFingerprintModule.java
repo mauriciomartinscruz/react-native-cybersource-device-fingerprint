@@ -1,7 +1,4 @@
-
-package com.mauriciomartinscruz.CybersourceDeviceFingerprint;
-
-import android.app.Application;
+package com.mauriciomartinscruz.FingerprintCybersource;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -20,77 +17,76 @@ import com.threatmetrix.TrustDefender.TMXProfilingHandle.Result;
 import java.util.ArrayList;
 import java.util.List;
 
+public class RNFingerprintCybersourceModule extends ReactContextBaseJavaModule {
 
-public class RNCybersourceDeviceFingerprintModule extends ReactContextBaseJavaModule {
+  private static final String CYBERSOURCE_SDK = "RNFingerprintCybersource";
+  private TMXProfiling _defender = null;
 
-    private static final String CYBERSOURCE_SDK = "RNCybersourceDeviceFingerprint";
-    private TMXProfiling _defender = null;
+  public RNFingerprintCybersourceModule(ReactApplicationContext reactContext) {
+    super(reactContext);
+    reactContext.addActivityEventListener(this);
+  }
 
-    public RNCybersourceDeviceFingerprintModule(ReactApplicationContext reactContext) {
-        super(reactContext);
+  @Override
+  public String getName() {
+    return CYBERSOURCE_SDK;
+  }
+
+  @ReactMethod
+  public void configure(final String orgId, final Promise promise) {
+    if (_defender != null) {
+      promise.reject(CYBERSOURCE_SDK, "CyberSource SDK is already initialised");
+      return;
     }
 
-    @Override
-    public String getName() {
-        return CYBERSOURCE_SDK;
+    _defender = TMXProfiling.getInstance();
+
+    try {
+      TMXConfig config = new TMXConfig()
+              .setOrgId(orgId)
+              .setContext(getReactApplicationContext());
+      _defender.init(config);
+    } catch (IllegalArgumentException exception) {
+      promise.reject(CYBERSOURCE_SDK, "Invalid parameters");
+    }
+    promise.resolve(true);
+  }
+
+  @ReactMethod
+  public void getSessionID(final ReadableArray attributes, final Promise promise) {
+    if (_defender == null) {
+      promise.reject(CYBERSOURCE_SDK, "CyberSource SDK is not yet initialised");
+      return;
     }
 
-    @ReactMethod
-    public void configure(final String orgId, final Promise promise) {
-        if (_defender != null) {
-            promise.reject(CYBERSOURCE_SDK, "CyberSource SDK is already initialised");
-            return;
-        }
+    List<String> list = new ArrayList<>();
 
-        _defender = TMXProfiling.getInstance();
-
-        try {
-            TMXConfig config = new TMXConfig()
-                    .setOrgId(orgId)
-                    .setContext(getReactApplicationContext());
-            _defender.init(config);
-        } catch (IllegalArgumentException exception) {
-            promise.reject(CYBERSOURCE_SDK, "Invalid parameters");
-        }
-        promise.resolve(true);
+    int leni = attributes.size();
+    for (int i = 0; i < leni; ++i) {
+      String value = attributes.getString(i);
+      if (value != null) {
+        list.add(value);
+      }
     }
 
-    @ReactMethod
-    public void getSessionID(final ReadableArray attributes, final Promise promise) {
-        if (_defender == null) {
-            promise.reject(CYBERSOURCE_SDK, "CyberSource SDK is not yet initialised");
-            return;
-        }
+    TMXProfilingOptions options = new TMXProfilingOptions().setCustomAttributes(list);
+    TMXProfiling.getInstance().profile(options, new CompletionNotifier(promise));
+  }
 
-        List<String> list = new ArrayList<>();
+  private class CompletionNotifier implements TMXEndNotifier {
+      private final Promise _promise;
 
-        int leni = attributes.size();
-        for (int i = 0; i < leni; ++i) {
-            String value = attributes.getString(i);
-            if (value != null) {
-                list.add(value);
-            }
-        }
+      CompletionNotifier(Promise promise) {
+        super();
+        _promise = promise;
+      }
 
-        TMXProfilingOptions options = new TMXProfilingOptions().setCustomAttributes(list);
-        TMXProfiling.getInstance().profile(options, new CompletionNotifier(promise));
-    }
-
-    private class CompletionNotifier implements TMXEndNotifier {
-        private final Promise _promise;
-
-        CompletionNotifier(Promise promise) {
-            super();
-            _promise = promise;
-        }
-
-        @Override
-        public void complete(Result result) {
-            WritableMap map = new WritableNativeMap();
-            map.putString("sessionId", result.getSessionID());
-            map.putInt("status", result.getStatus().ordinal());
-            _promise.resolve(map);
-        }
-    }
-
+      @Override
+      public void complete(Result result) {
+        WritableMap map = new WritableNativeMap();
+        map.putString("sessionId", result.getSessionID());
+        map.putInt("status", result.getStatus().ordinal());
+        _promise.resolve(map);
+      }
+  }
 }

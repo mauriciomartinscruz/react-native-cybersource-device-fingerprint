@@ -1,6 +1,6 @@
 
 import { NativeModules, Platform } from 'react-native';
-const { RNCybersourceDeviceFingerprint } = NativeModules;
+const { RNFingerprintCybersource } = NativeModules;
 
 var Status = {
   NOTYET: 0,
@@ -66,7 +66,7 @@ var Status = {
  * @return {promise} Promise resolves true if call is done, otherwise throws.
  */
 function configure(orgId) {
-  return RNCybersourceDeviceFingerprint.configure(orgId);
+  return RNFingerprintCybersource.configure(orgId);
 }
 
 /**
@@ -75,7 +75,7 @@ function configure(orgId) {
  * @return {promise} An object containing a sessionId, and a status (Status enum)
  */
 function getSessionID(attributes) {
-  return RNCybersourceDeviceFingerprint.getSessionID(attributes).then(result => {
+  return RNFingerprintCybersource.getSessionID(attributes).then(result => {
     return {
       sessionId: result.sessionId,
       status: Status.init(result.status),

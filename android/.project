@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>react-native-cybersource-device-fingerprint</name>
-	<comment>Project react-native-cybersource-device-fingerprint created by Buildship.</comment>
+	<name>react-native-fingerprint-cybersource</name>
+	<comment>Project react-native-fingerprint-cybersource created by Buildship.</comment>
 	<projects>
 	</projects>
 	<buildSpec>
