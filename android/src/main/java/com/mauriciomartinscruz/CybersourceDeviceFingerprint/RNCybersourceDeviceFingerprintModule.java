@@ -24,7 +24,6 @@ public class RNFingerprintCybersourceModule extends ReactContextBaseJavaModule {
 
   public RNFingerprintCybersourceModule(ReactApplicationContext reactContext) {
     super(reactContext);
-    reactContext.addActivityEventListener(this);
   }
 
   @Override
